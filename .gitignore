@@ -197,6 +197,3 @@ pip-selfcheck.json
 
 /images
 !/images/.gitkeep
-
-# End of https://www.toptal.com/developers/gitignore/api/python,linux,virtualenv,macos
-

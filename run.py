@@ -44,7 +44,6 @@ class Application:
             self.current_image = Image.fromarray(cv2image)
             self.panel.imgtk = ImageTk.PhotoImage(image=self.current_image)
             self.panel.config(image=self.panel.imgtk)
-
             self.root.after(1, self.video_loop)
 
     def take_snapshot(self):
@@ -53,7 +52,17 @@ class Application:
             "%Y-%m-%d_%H-%M-%S"))
         p = os.path.join(self.output_path, filename)
         self.current_image.save(p, "PNG")
+        self.show_label(filename)
+
+    def show_label(self, filename):
         print("[INFO] saved {}".format(filename))
+        self.info_label = tk.Label(self.root,
+                                   text="Saved {}".format(filename),
+                                   fg="white",
+                                   bg="darkgrey",
+                                   font="Helvetica 28 bold")
+        self.info_label.place(relx=0.0, rely=0.0, anchor='nw')
+        self.root.after(5000, self.info_label.destroy)
 
     def destructor(self):
         self.root.destroy()
