@@ -13,11 +13,11 @@ import os
 class Application:
     def __init__(self, output_path="./"):
         self.vs = cv2.VideoCapture(0)
-        self.output_path = output_path  
-        self.current_image = None  
+        self.output_path = output_path
+        self.current_image = None
 
-        self.root = tk.Tk()  
-        # self.root.title("Microscope")  
+        self.root = tk.Tk()
+        # self.root.title("Microscope")
 
         self.root.protocol('WM_DELETE_WINDOW', self.destructor)
         self.root.attributes("-fullscreen", True)
@@ -25,7 +25,7 @@ class Application:
         self.size = (self.root.winfo_screenwidth(),
                      self.root.winfo_screenheight() - 30)
 
-        self.panel = tk.Label(self.root)  
+        self.panel = tk.Label(self.root)
         self.panel.pack(fill='both', expand=True)
 
         self.btn = tk.Button(self.root, text="Snapshot!",
@@ -35,8 +35,8 @@ class Application:
         self.video_loop()
 
     def video_loop(self):
-        ok, frame = self.vs.read()  
-        if ok:  
+        ok, frame = self.vs.read()
+        if ok:
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
             cv2image = cv2.resize(cv2image, self.size,
                                   interpolation=cv2.INTER_NEAREST)
@@ -50,9 +50,9 @@ class Application:
     def take_snapshot(self):
         ts = datetime.datetime.now()  # grab the current timestamp
         filename = "{}.jpg".format(ts.strftime(
-            "%Y-%m-%d_%H-%M-%S"))  
-        p = os.path.join(self.output_path, filename)  
-        self.current_image.save(p, "PNG")  
+            "%Y-%m-%d_%H-%M-%S"))
+        p = os.path.join(self.output_path, filename)
+        self.current_image.save(p, "PNG")
         print("[INFO] saved {}".format(filename))
 
     def destructor(self):
@@ -62,7 +62,7 @@ class Application:
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-o", "--output", default="./",
+ap.add_argument("-o", "--output", default="./images",
                 help="path to output directory to store snapshots (default: current folder")
 args = vars(ap.parse_args())
 
