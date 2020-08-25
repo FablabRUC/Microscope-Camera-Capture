@@ -33,19 +33,23 @@ class Application:
             self.root.config(cursor='none')
         self.panel.pack(fill='both', expand=True)
 
-        self.btn = tk.Button(self.root, text="Snapshot!",
-                             command=self.take_snapshot,
-                             width=8, height=8)
+        self.snapshot_btn = tk.Button(self.root, text="Snapshot!",
+                                      command=self.take_snapshot,
+                                      width=8, height=8)
 
+        self.video_btn = tk.Button(self.root, text="Video",
+                                      command=self.record_video,
+                                      width=8, height=8)
         self.info_label = tk.Label(self.root)
         self.video_loop()
 
     def show_gui(self, arg):
-        self.btn.place(relx=0.0, rely=1.0, anchor='sw')
+        self.snapshot_btn.place(relx=0.0, rely=1.0, anchor='sw')
+        self.video_btn.place(relx=1.0, rely=1.0, anchor='se')
         self.root.after(5000, self.hide_gui)
 
     def hide_gui(self):
-        self.btn.place_forget()
+        self.snapshot_btn.place_forget()
 
     def video_loop(self):
         ok, frame = self.vs.read()
@@ -66,6 +70,9 @@ class Application:
         p = os.path.join(self.output_path, filename)
         self.current_image.save(p, "PNG")
         self.show_label(filename)
+
+    def record_video(self):
+        return
 
     def show_label(self, filename):
         print("[INFO] saved {}".format(filename))
