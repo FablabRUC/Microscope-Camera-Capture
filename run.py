@@ -21,6 +21,7 @@ class Application:
         # self.root.title("Microscope")
 
         self.root.bind('<Escape>', self.destructor)
+        self.root.bind('<Motion>', self.show_gui)
         self.root.protocol('WM_DELETE_WINDOW', self.destructor)
         self.root.attributes("-fullscreen", True)
 
@@ -34,11 +35,17 @@ class Application:
 
         self.btn = tk.Button(self.root, text="Snapshot!",
                              command=self.take_snapshot,
-                             width=15,height=15)
-        self.btn.place(relx=0.0, rely=1.0, anchor='sw')
+                             width=15, height=15)
 
         self.info_label = tk.Label(self.root)
         self.video_loop()
+
+    def show_gui(self, arg):
+        self.btn.place(relx=0.0, rely=1.0, anchor='sw')
+        self.root.after(5000, self.hide_gui)
+
+    def hide_gui(self):
+        self.btn.place_forget()
 
     def video_loop(self):
         ok, frame = self.vs.read()
