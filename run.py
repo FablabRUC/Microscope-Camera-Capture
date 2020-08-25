@@ -35,7 +35,7 @@ class Application:
 
         self.btn = tk.Button(self.root, text="Snapshot!",
                              command=self.take_snapshot,
-                             width=15, height=15)
+                             width=8, height=8)
 
         self.info_label = tk.Label(self.root)
         self.video_loop()
