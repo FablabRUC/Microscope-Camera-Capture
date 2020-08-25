@@ -19,6 +19,7 @@ class Application:
         self.root = tk.Tk()
         # self.root.title("Microscope")
 
+        self.root.bind('<Escape>', self.destructor)
         self.root.protocol('WM_DELETE_WINDOW', self.destructor)
         self.root.attributes("-fullscreen", True)
 
@@ -64,7 +65,7 @@ class Application:
         self.info_label.place(relx=0.0, rely=0.0, anchor='nw')
         self.root.after(5000, self.info_label.destroy)
 
-    def destructor(self):
+    def destructor(self, arg):
         self.root.destroy()
         self.vs.release()
         cv2.destroyAllWindows()
