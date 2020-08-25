@@ -7,6 +7,7 @@ import tkinter as tk
 import argparse
 import datetime
 import cv2
+import sys
 import os
 
 
@@ -24,16 +25,19 @@ class Application:
         self.root.attributes("-fullscreen", True)
 
         self.size = (self.root.winfo_screenwidth(),
-                     self.root.winfo_screenheight() - 30)
+                     self.root.winfo_screenheight())
 
         self.panel = tk.Label(self.root)
-        self.root.config(cursor='none')
+        if sys.platform == 'linux':
+            self.root.config(cursor='none')
         self.panel.pack(fill='both', expand=True)
 
         self.btn = tk.Button(self.root, text="Snapshot!",
-                             command=self.take_snapshot)
-        self.btn.pack(fill='both', expand=True)
+                             command=self.take_snapshot,
+                             width=15,height=15)
+        self.btn.place(relx=0.0, rely=1.0, anchor='sw')
 
+        self.info_label = tk.Label(self.root)
         self.video_loop()
 
     def video_loop(self):
@@ -58,6 +62,7 @@ class Application:
 
     def show_label(self, filename):
         print("[INFO] saved {}".format(filename))
+        self.info_label.destroy()
         self.info_label = tk.Label(self.root,
                                    text="Saved {}".format(filename),
                                    fg="white",
