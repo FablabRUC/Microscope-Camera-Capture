@@ -27,6 +27,7 @@ class Application:
                      self.root.winfo_screenheight() - 30)
 
         self.panel = tk.Label(self.root)
+        self.root.config(cursor='none')
         self.panel.pack(fill='both', expand=True)
 
         self.btn = tk.Button(self.root, text="Snapshot!",
