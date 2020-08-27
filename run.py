@@ -68,17 +68,20 @@ class Application:
         filename = "{}.jpg".format(ts.strftime(
             "%Y-%m-%d_%H-%M-%S"))
         p = os.path.join(self.output_path, filename)
-        self.current_image.save(p, "PNG")
-        self.show_label(filename)
+        ok, frame = self.vs.read()
+        if ok:
+            snapshot = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA))
+            snapshot.save(p, "PNG")
+            self.show_label("[INFO] saved {}".format(filename))
 
     def record_video(self):
         return
 
-    def show_label(self, filename):
-        print("[INFO] saved {}".format(filename))
+    def show_label(self, label):
+        print(label)
         self.info_label.destroy()
         self.info_label = tk.Label(self.root,
-                                   text="Saved {}".format(filename),
+                                   text=label,
                                    fg="white",
                                    bg="darkgrey",
                                    font="Helvetica 28 bold")
