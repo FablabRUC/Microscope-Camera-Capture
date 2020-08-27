@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import filedialog
 import argparse
+from pathlib import Path
 import datetime
 import cv2
 import sys
@@ -13,9 +14,11 @@ import os
 
 
 class Application:
-    def __init__(self, output_path="./"):
+    def __init__(self):
+        self.output_path = str(Path().absolute()) + '/images'
+        print(self.output_path)
+
         self.vs = cv2.VideoCapture(0)
-        self.output_path = output_path
         self.current_image = None
 
         self.root = tk.Tk()
@@ -105,12 +108,6 @@ class Application:
         cv2.destroyAllWindows()
 
 
-ap = argparse.ArgumentParser()
-ap.add_argument("-o", "--output", default="./images",
-                help="path to output directory to store snapshots (default: current folder")
-args = vars(ap.parse_args())
-
-# start the app
 print("[INFO] starting...")
-pba = Application(args["output"])
+pba = Application()
 pba.root.mainloop()
