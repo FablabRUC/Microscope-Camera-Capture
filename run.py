@@ -16,7 +16,6 @@ import os
 class Application:
     def __init__(self):
         self.output_path = str(Path().absolute()) + '/images'
-        print(self.output_path)
 
         self.vs = cv2.VideoCapture(0)
         self.current_image = None
@@ -88,7 +87,6 @@ class Application:
     def set_save_directory(self):
         self.output_path = filedialog.askdirectory(
             initialdir=self.output_path, title="Set output path")
-        print(self.output_path)
         return
 
     def show_label(self, label):
