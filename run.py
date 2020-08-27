@@ -4,6 +4,7 @@ https://stackoverflow.com/questions/43184817/showing-video-on-the-entire-screen-
 
 from PIL import Image, ImageTk
 import tkinter as tk
+from tkinter import filedialog
 import argparse
 import datetime
 import cv2
@@ -18,7 +19,6 @@ class Application:
         self.current_image = None
 
         self.root = tk.Tk()
-        # self.root.title("Microscope")
 
         self.root.bind('<Escape>', self.destructor)
         self.root.bind('<Motion>', self.show_gui)
@@ -37,18 +37,24 @@ class Application:
                                       command=self.take_snapshot,
                                       width=8, height=8)
 
+        self.options_btn = tk.Button(self.root, text="Options",
+                                     command=self.set_save_directory,
+                                     width=8, height=8)
+
         self.video_btn = tk.Button(self.root, text="Video",
-                                      command=self.record_video,
-                                      width=8, height=8)
+                                   command=self.record_video,
+                                   width=8, height=8)
         self.info_label = tk.Label(self.root)
         self.video_loop()
 
     def show_gui(self, arg):
         self.snapshot_btn.place(relx=0.0, rely=1.0, anchor='sw')
-        self.video_btn.place(relx=1.0, rely=1.0, anchor='se')
+        self.options_btn.place(relx=0.0, rely=0.0, anchor='nw')
+        # self.video_btn.place(relx=1.0, rely=1.0, anchor='se')
         self.root.after(5000, self.hide_gui)
 
     def hide_gui(self):
+        self.options_btn.place_forget()
         self.snapshot_btn.place_forget()
 
     def video_loop(self):
@@ -57,7 +63,6 @@ class Application:
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
             cv2image = cv2.resize(cv2image, self.size,
                                   interpolation=cv2.INTER_NEAREST)
-            # .resize(self.size, resample=Image.NEAREST)  # convert image for PIL
             self.current_image = Image.fromarray(cv2image)
             self.panel.imgtk = ImageTk.PhotoImage(image=self.current_image)
             self.panel.config(image=self.panel.imgtk)
@@ -75,6 +80,12 @@ class Application:
             self.show_label("[INFO] saved {}".format(filename))
 
     def record_video(self):
+        return
+
+    def set_save_directory(self):
+        self.output_path = filedialog.askdirectory(
+            initialdir=self.output_path, title="Set output path")
+        print(self.output_path)
         return
 
     def show_label(self, label):
