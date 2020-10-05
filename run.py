@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 import argparse
 from pathlib import Path
+import subprocess
 import datetime
 import cv2
 import sys
@@ -43,6 +44,10 @@ class Application:
                                      command=self.set_save_directory,
                                      width=8, height=8)
 
+        self.ml_button = tk.Button(self.root, text="ML",
+                                     command=self.send_to_torch,
+                                     width=8, height=8)
+                                     
         self.video_btn = tk.Button(self.root, text="Video",
                                    command=self.record_video,
                                    width=8, height=8)
@@ -52,6 +57,7 @@ class Application:
     def show_gui(self, arg):
         self.snapshot_btn.place(relx=0.0, rely=1.0, anchor='sw')
         self.options_btn.place(relx=0.0, rely=0.0, anchor='nw')
+        self.ml_button.place(relx=1.0, rely=1.0, anchor='se')
         # self.video_btn.place(relx=1.0, rely=1.0, anchor='se')
         self.root.after(5000, self.hide_gui)
 
@@ -87,6 +93,26 @@ class Application:
     def set_save_directory(self):
         self.output_path = filedialog.askdirectory(
             initialdir=self.output_path, title="Set output path")
+        return
+
+    def send_to_torch(self):
+        print('Sending to torch')
+        # Create image
+        ts = datetime.datetime.now()  # grab the current timestamp
+        filename = "{}.jpg".format(ts.strftime(
+            "%Y-%m-%d_%H-%M-%S"))
+        p = os.path.join('/tmp/', filename)
+        ok, frame = self.vs.read()
+        if ok:
+            snapshot = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA))
+            snapshot.save(p, "PNG")
+        
+        # Send to YOLOv5
+        # out = subprocess.check_output(
+        #     "ls non_existent_file; exit 0",
+        #     stderr=subprocess.STDOUT,
+        #     shell=True)
+        # print(out)
         return
 
     def show_label(self, label):
