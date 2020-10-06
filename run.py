@@ -4,9 +4,10 @@ https://stackoverflow.com/questions/43184817/showing-video-on-the-entire-screen-
 
 from PIL import Image, ImageTk
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import argparse
 from pathlib import Path
+import config
 import subprocess
 import datetime
 import cv2
@@ -48,8 +49,8 @@ class Application:
                                      width=8, height=8)
 
         self.ml_button = tk.Button(self.root, text="ML",
-                                     command=self.send_to_torch,
-                                     width=8, height=8)
+                                   command=self.send_to_torch,
+                                   width=8, height=8)
 
         self.video_btn = tk.Button(self.root, text="Video",
                                    command=self.record_video,
@@ -77,13 +78,15 @@ class Application:
         ok, frame = self.vs.read()
         if ok:
             if self.showing_torch_image:
-                img = cv2.imread(self.torch_image_path, 1) 
+                img = cv2.imread(self.torch_image_path, 1)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+                img = cv2.resize(img, self.size,
+                                 interpolation=cv2.INTER_NEAREST)
                 self.current_image = Image.fromarray(img)
             else:
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 cv2image = cv2.resize(cv2image, self.size,
-                                    interpolation=cv2.INTER_NEAREST)
+                                      interpolation=cv2.INTER_NEAREST)
                 self.current_image = Image.fromarray(cv2image)
             self.panel.imgtk = ImageTk.PhotoImage(image=self.current_image)
             self.panel.config(image=self.panel.imgtk)
@@ -109,7 +112,6 @@ class Application:
         return
 
     def send_to_torch(self):
-        print('Sending to torch')
         # Create image
         ts = datetime.datetime.now()  # grab the current timestamp
         filename = "{}.jpg".format(ts.strftime(
@@ -119,12 +121,14 @@ class Application:
         if ok:
             snapshot = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA))
             snapshot.save(p, "PNG")
-        
-        # Send to YOLOv5
-        yolo_path = '/Users/frederikjuutilainen/Programming/FabLab/yolov5/'
-        out_path = os.path.join('/Users/frederikjuutilainen/Programming/FabLab/microscope_gui/','inference/output/')
-        path_to_script = os.path.join(yolo_path, 'detect.py')
-        weights = ' --weights /Users/frederikjuutilainen/Programming/FabLab/yolov5/weights/blood.pt'
+
+        if not os.path.isdir(config.YOLOv5_PATH) or not os.path.isfile(config.WEIGHTS):
+            messagebox.showerror(
+                title='Error', message='YOLOv5 path or weights are not properly set in config file.')
+            return
+        out_path = os.path.join(os.getcwd(), 'inference/output/')
+        path_to_script = os.path.join(config.YOLOv5_PATH, 'detect.py')
+        weights = ' --weights ' + config.WEIGHTS
         source = ' --source ' + p
         cmd = "python3.8 " + path_to_script + source + weights
         out = subprocess.check_output(
