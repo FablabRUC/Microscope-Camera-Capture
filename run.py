@@ -47,6 +47,8 @@ class Application:
         self.ml_button = tk.Button(self.root, text="ML",
                                      command=self.send_to_torch,
                                      width=8, height=8)
+
+        self.showing_torch_image = True
                                      
         self.video_btn = tk.Button(self.root, text="Video",
                                    command=self.record_video,
@@ -68,10 +70,15 @@ class Application:
     def video_loop(self):
         ok, frame = self.vs.read()
         if ok:
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-            cv2image = cv2.resize(cv2image, self.size,
-                                  interpolation=cv2.INTER_NEAREST)
-            self.current_image = Image.fromarray(cv2image)
+            if self.showing_torch_image:
+                img = cv2.imread('/Users/frederikjuutilainen/Programming/FabLab/microscope_gui/inference/output/2020-10-06_11-53-08.jpg', 1) 
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+                self.current_image = Image.fromarray(img)
+            else:
+                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                cv2image = cv2.resize(cv2image, self.size,
+                                    interpolation=cv2.INTER_NEAREST)
+                self.current_image = Image.fromarray(cv2image)
             self.panel.imgtk = ImageTk.PhotoImage(image=self.current_image)
             self.panel.config(image=self.panel.imgtk)
             self.root.after(1, self.video_loop)
