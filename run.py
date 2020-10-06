@@ -17,9 +17,11 @@ import os
 class Application:
     def __init__(self):
         self.output_path = str(Path().absolute()) + '/images'
+        self.torch_image_path = ''
 
         self.vs = cv2.VideoCapture(0)
         self.current_image = None
+        self.showing_torch_image = False
 
         self.root = tk.Tk()
 
@@ -32,6 +34,7 @@ class Application:
                      self.root.winfo_screenheight())
 
         self.panel = tk.Label(self.root)
+        self.panel.bind("<Button-1>", self.show_live_feed)
         if sys.platform == 'linux':
             self.root.config(cursor='none')
         self.panel.pack(fill='both', expand=True)
@@ -48,8 +51,6 @@ class Application:
                                      command=self.send_to_torch,
                                      width=8, height=8)
 
-        self.showing_torch_image = True
-                                     
         self.video_btn = tk.Button(self.root, text="Video",
                                    command=self.record_video,
                                    width=8, height=8)
@@ -63,6 +64,11 @@ class Application:
         # self.video_btn.place(relx=1.0, rely=1.0, anchor='se')
         self.root.after(5000, self.hide_gui)
 
+    def show_live_feed(self, arg):
+        print(self.showing_torch_image)
+        if self.showing_torch_image:
+            self.showing_torch_image = False
+
     def hide_gui(self):
         self.options_btn.place_forget()
         self.snapshot_btn.place_forget()
@@ -71,7 +77,7 @@ class Application:
         ok, frame = self.vs.read()
         if ok:
             if self.showing_torch_image:
-                img = cv2.imread('/Users/frederikjuutilainen/Programming/FabLab/microscope_gui/inference/output/2020-10-06_11-53-08.jpg', 1) 
+                img = cv2.imread(self.torch_image_path, 1) 
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
                 self.current_image = Image.fromarray(img)
             else:
@@ -116,7 +122,7 @@ class Application:
         
         # Send to YOLOv5
         yolo_path = '/Users/frederikjuutilainen/Programming/FabLab/yolov5/'
-        out_path = os.path.join(yolo_path,'inference/output/')
+        out_path = os.path.join('/Users/frederikjuutilainen/Programming/FabLab/microscope_gui/','inference/output/')
         path_to_script = os.path.join(yolo_path, 'detect.py')
         weights = ' --weights /Users/frederikjuutilainen/Programming/FabLab/yolov5/weights/blood.pt'
         source = ' --source ' + p
@@ -125,14 +131,11 @@ class Application:
             cmd,
             stderr=subprocess.STDOUT,
             shell=True)
-        self.show_torch_image(os.path.join(out_path,filename))
+        self.torch_image_path = os.path.join(out_path, filename)
+        self.showing_torch_image = True
         return
 
-    def show_torch_image(self, path):
-        print(path)
-
     def show_label(self, label):
-        print(label)
         self.info_label.destroy()
         self.info_label = tk.Label(self.root,
                                    text=label,
