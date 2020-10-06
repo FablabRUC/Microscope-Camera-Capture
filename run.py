@@ -108,12 +108,21 @@ class Application:
             snapshot.save(p, "PNG")
         
         # Send to YOLOv5
-        # out = subprocess.check_output(
-        #     "ls non_existent_file; exit 0",
-        #     stderr=subprocess.STDOUT,
-        #     shell=True)
-        # print(out)
+        yolo_path = '/Users/frederikjuutilainen/Programming/FabLab/yolov5/'
+        out_path = os.path.join(yolo_path,'inference/output/')
+        path_to_script = os.path.join(yolo_path, 'detect.py')
+        weights = ' --weights /Users/frederikjuutilainen/Programming/FabLab/yolov5/weights/blood.pt'
+        source = ' --source ' + p
+        cmd = "python3.8 " + path_to_script + source + weights
+        out = subprocess.check_output(
+            cmd,
+            stderr=subprocess.STDOUT,
+            shell=True)
+        self.show_torch_image(os.path.join(out_path,filename))
         return
+
+    def show_torch_image(self, path):
+        print(path)
 
     def show_label(self, label):
         print(label)
