@@ -73,6 +73,7 @@ class Application:
     def hide_gui(self):
         self.options_btn.place_forget()
         self.snapshot_btn.place_forget()
+        self.ml_button.place_forget()
 
     def video_loop(self):
         ok, frame = self.vs.read()
