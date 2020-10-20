@@ -73,6 +73,7 @@ class Application:
     def hide_gui(self):
         self.options_btn.place_forget()
         self.snapshot_btn.place_forget()
+        self.ml_button.place_forget()
 
     def video_loop(self):
         ok, frame = self.vs.read()
@@ -131,11 +132,13 @@ class Application:
         weights = ' --weights ' + config.WEIGHTS
         source = ' --source ' + p
         cmd = "python3.8 " + path_to_script + source + weights
+        self.show_label('Sending image to ML algorithm. Please wait...')
         out = subprocess.check_output(
             cmd,
             stderr=subprocess.STDOUT,
             shell=True)
         self.torch_image_path = os.path.join(out_path, filename)
+        self.show_label('Showing image. Press anywhere to resume to live feed.')
         self.showing_torch_image = True
         return
 
