@@ -131,7 +131,7 @@ class Application:
         path_to_script = os.path.join(config.YOLOv5_PATH, 'detect.py')
         weights = ' --weights ' + config.WEIGHTS
         source = ' --source ' + p
-        confidence = '--conf-thres ' + config.CONFIDENCE_THRESHOLD
+        confidence = ' --conf-thres ' + str(config.CONFIDENCE_THRESHOLD)
         cmd = "python3.8 " + path_to_script + source + weights + confidence
         self.show_label('Sending image to ML algorithm. Please wait...')
         out = subprocess.check_output(
